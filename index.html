@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>San Dučić</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="envelope">
+      <div class="notifications">
+        <h3>Obavijesti</h3>
+        <div id="notification-list">
+        </div>
+      </div>
+      <div class="address">
+        <p>Amina Gutošić</p>
+        <p>Neka adresa :)</p>
+        <p>88360 Stolac</p>
+      </div>
+      <div class="controls">
+        <div id="notification-count" class="notification-count">Ukupno pisama: 0</div>
+        <button id="clear-button" class="clear-button">Očisti sanduče</button>
+      </div>
+    </div>
+    <div class="qr-code">
+      <img src="images/frame.png">
+    </div>
+  </div>
+  
+  <script>
+    var firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      databaseURL: "YOUR_DATABASE_URL",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    var firebaseRef = firebase.database().ref("Mailbox/status");
+
+    const notifications = [];
+    const notificationList = document.getElementById("notification-list");
+    const notificationCount = document.getElementById("notification-count");
+    const clearButton = document.getElementById("clear-button");
+
+    function updateNotificationCount() {
+      notificationCount.textContent = `Ukupno pisama: ${notifications.length}`;
+    }
+
+    function displayNotifications() {
+      notificationList.innerHTML = "";
+
+      notifications.forEach((notification, index) => {
+        const notificationItem = document.createElement("div");
+        notificationItem.className = "notification-item";
+
+        if (index === 0) {
+          notificationItem.classList.add("highlight");
+          setTimeout(() => {
+            notificationItem.classList.remove("highlight");
+            notificationItem.style.backgroundColor = "#f9f9f9";
+          }, 3000);
+        }
+
+        notificationItem.innerHTML = `
+          <strong>${notification.title}</strong>
+          <p>${notification.time}</p>
+        `;
+        notificationList.appendChild(notificationItem);
+      });
+
+      notificationList.scrollTop = 0;
+
+      updateNotificationCount();
+    }
+
+    firebaseRef.on("value", function(snapshot) {
+      const status = snapshot.val();
+
+      if (status === "Pismo detektovano") {
+        const notification = {
+          title: "Pismo detektovano",
+          time: new Date().toLocaleString("en-GB")
+        };
+        notifications.unshift(notification);
+        displayNotifications();
+      }
+    });
+
+    clearButton.addEventListener("click", () => {
+      notifications.length = 0;
+      displayNotifications();
+    });
+
+    displayNotifications();
+  </script>
+</body>
+</html>
