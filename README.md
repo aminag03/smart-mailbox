@@ -51,3 +51,5 @@ Enter your Wi-Fi and Firebase credentials
 ## Project Goal
 
 Smart Mailbox enhances convenience and efficiency in mail reception, allowing users to know at any moment whether they have received mail without the need for physical mailbox checks. Additionally, the system facilitates communication between users and postal workers by providing a visual confirmation of successful delivery.
+
+![image](https://github.com/user-attachments/assets/972d8eb0-c8ab-4f87-a8ee-9d19b7adbbc4)
